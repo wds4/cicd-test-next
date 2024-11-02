@@ -36,6 +36,6 @@ jobs:
 
               # Now we have got the access of EC2 and we will start the deploy .
               cd /home/ubuntu/cicd-test-next &&
-              git pull origin main
+              ./scripts/deploy.sh
               '
-              
+
