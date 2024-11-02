@@ -24,6 +24,18 @@ jobs:
       - name: Build Next.js app
         run: npm run build
 
-      - name: Deploy
+      - name: Build & Deploy
+        env:
+            PRIVATE_KEY: ${{ secrets.AWS_EC2_KEY }}
+            HOSTNAME: ${{secrets.AWS_EC2_HOST}}
+            USER_NAME: ${{secrets.AWS_EC2_USER}}
+
         run: |
-          ssh -i ${{ secrets.AWS_EC2_KEY }} ubuntu@ec2-18-206-171-72.compute-1.amazonaws.com 'bash -s' < scripts/deploy.sh
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+
+              # Now we have got the access of EC2 and we will start the deploy .
+              cd /home/ubuntu/cicd-test-next &&
+              git pull origin main
+              '
+              
